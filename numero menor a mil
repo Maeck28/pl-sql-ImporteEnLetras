@@ -1,0 +1,136 @@
+create or replace FUNCTION numero_menor_mil(numero number)
+RETURN varchar2 
+as
+ centenas NUMBER;
+ decenas NUMBER;
+ unidades NUMBER;
+ en_letras varchar2(200);
+ entero number;
+ fuera_de_rango EXCEPTION;
+ unir varchar2(2);
+ no_entero EXCEPTION;
+ 
+ 
+ BEGIN
+    if trunc(numero) <> numero then
+            raise no_entero;
+        end if;
+
+        --if numero < 0 or numero > 999 then
+        if numero not between 0 and 999 then
+            raise fuera_de_rango;
+        end if;
+
+
+        if numero = 100 then
+            return ('CIEN ');
+        elsif numero = 0 then
+            return ('CERO ');
+        elsif numero = 1 then
+            return ('UN ');
+        else
+            centenas := trunc(numero / 100);
+            decenas  := trunc((numero mod 100)/10);
+            unidades := numero mod 10;
+            unir := 'Y ';
+
+            -- CENTENAS
+            if centenas = 1 then
+                en_letras := 'CIENTO ';
+            elsif centenas = 2 then
+                en_letras := 'DOSCIENTOS ';
+            elsif centenas = 3 then
+                en_letras := 'TRESCIENTOS ';
+            elsif centenas = 4 then
+                en_letras := 'CUATROCIENTOS ';
+            elsif centenas = 5 then
+                en_letras := 'QUINIENTOS ';
+            elsif centenas = 6 then
+                en_letras := 'SEISCIENTOS ';
+            elsif centenas = 7 then
+                en_letras := 'SETECIENTOS ';
+            elsif centenas = 8 then
+                en_letras := 'OCHOCIENTOS ';
+            elsif centenas = 9 then
+                en_letras := 'NOVECIENTOS ';
+            end if;
+
+            -- DECENAS
+            if decenas = 3 then
+                en_letras := en_letras || 'TREINTA ';
+            elsif decenas = 4 then
+                en_letras := en_letras || 'CUARENTA ';
+            elsif decenas = 5 then
+                en_letras := en_letras || 'CINCUENTA ';
+            elsif decenas = 6 then
+                en_letras := en_letras || 'SESENTA ';
+            elsif decenas = 7 then
+                en_letras := en_letras || 'SETENTA ';
+            elsif decenas = 8 then
+                en_letras := en_letras || 'OCHENTA ';
+            elsif decenas = 9 then
+                en_letras := en_letras || 'NOVENTA ';
+            elsif decenas = 1 then
+                if unidades < 6 then
+                    if unidades = 0 then
+                        en_letras := en_letras || 'DIEZ ';
+                    elsif unidades = 1 then
+                        en_letras := en_letras || 'ONCE ';
+                    elsif unidades = 2 then
+                        en_letras := en_letras || 'DOCE ';
+                    elsif unidades = 3 then
+                        en_letras := en_letras || 'TRECE ';
+                    elsif unidades = 4 then
+                        en_letras := en_letras || 'CATORCE ';
+                    elsif unidades = 5 then
+                        en_letras := en_letras || 'QUINCE ';
+                    end if;
+                    unidades := 0;
+                else
+                    en_letras := en_letras || 'DIECI';
+                    unir := null;
+                end if;
+            elsif decenas = 2 then
+                if unidades = 0 then
+                    en_letras := en_letras || 'VEINTE ';
+                else
+                    en_letras := en_letras || 'VEINTI';
+                end if;
+                unir := null;
+            elsif decenas = 0 then
+                unir := null;
+            end if;
+
+            -- UNIDADES
+            if unidades = 1 then
+                en_letras := en_letras || unir || 'UN ';
+            elsif unidades = 2 then
+                en_letras := en_letras || unir || 'DOS ';
+            elsif unidades = 3 then
+                en_letras := en_letras || unir || 'TRES ';
+            elsif unidades = 4 then
+                en_letras := en_letras || unir || 'CUATRO ';
+            elsif unidades = 5 then
+                en_letras := en_letras || unir || 'CINCO ';
+            elsif unidades = 6 then
+                en_letras := en_letras || unir || 'SEIS ';
+            elsif unidades = 7 then
+                en_letras := en_letras || unir || 'SIETE ';
+            elsif unidades = 8 then
+                en_letras := en_letras || unir || 'OCHO ';
+            elsif unidades = 9 then
+                en_letras := en_letras || unir || 'NUEVE ';
+            end if;
+        end if;
+
+        return en_letras;
+
+EXCEPTION
+        when no_entero then
+            return 'Error: entrada no es un número entero';
+        when fuera_de_rango then
+            return 'Error: entrada fuera de rango';
+        when others then
+            return 'otro error';
+    
+end numero_menor_mil;
