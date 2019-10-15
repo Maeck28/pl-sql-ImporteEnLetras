@@ -1,0 +1,238 @@
+CREATE OR REPLACE FUNCTION numero_a_letras(numero number)
+
+return varchar2
+   as
+        fuera_de_rango EXCEPTION;
+        
+        millares_de_cuatrillon number;
+        cuatrillones number;
+        millares_de_trillon number;
+        trillones number;
+        millares_de_billon number;
+        billones number;
+        millares_de_millon number;
+        millones number;
+        millares number;
+        centenas number;
+        centimos number;
+
+        en_letras varchar2(4000):='';
+        entero number;
+        aux varchar2(15);
+
+    begin
+
+        if numero < 0 or numero > 999999999999999999999999999999.99 then
+            raise fuera_de_rango;
+        end if;
+
+        entero := trunc(numero);
+       
+       millares_de_cuatrillon := trunc ((entero mod 1000000000000000000000000000000) / 1000000000000000000000000000);
+                 dbms_output.put_line('millares_de_cuatrillon:'||millares_de_cuatrillon);
+       cuatrillones := trunc ((entero mod 1000000000000000000000000000) / 1000000000000000000000000);
+                 dbms_output.put_line('cuatrillones:'||cuatrillones);
+       millares_de_trillon := trunc ((entero mod 1000000000000000000000000) / 1000000000000000000000);
+                 dbms_output.put_line('millares_de_trillon:'||millares_de_trillon);
+       trillones := trunc ((entero mod 1000000000000000000000) / 1000000000000000000);
+               
+        millares_de_billon := trunc((entero mod 1000000000000000000) / 1000000000000000);
+                dbms_output.put_line('millares_de_billon:'||millares_de_billon);
+        billones := trunc((entero mod 1000000000000000) / 1000000000000);
+                dbms_output.put_line('billones:'||billones);
+        millares_de_millon := trunc((entero mod 1000000000000)/ 1000000000);
+                dbms_output.put_line('millares_de_millon:'||millares_de_millon);
+        millones := trunc((entero mod 1000000000) / 1000000);
+                dbms_output.put_line('millones:'||millones);
+        millares := trunc((entero mod 1000000) / 1000);
+               dbms_output.put_line('millares:'||millares);
+        centenas := entero mod 1000;
+             dbms_output.put_line('centenas:'||centenas);
+        centimos := (round(numero,2) * 100) mod 100;
+        
+        
+        
+        ------- MILLARES DE CUATRILLON
+           if millares_de_cuatrillon = 1 then
+            if cuatrillones = 0 then
+                en_letras := 'MIL CUATRILLONES ';              
+            else
+                en_letras := 'MIL ';
+              
+            end if;
+    elsif millares_de_cuatrillon > 1 then
+        
+            en_letras := en_letras || numero_menor_mil(millares_de_cuatrillon);
+             
+            if cuatrillones = 0 then
+                en_letras := en_letras || 'MIL CUATRILLONES ';
+               
+            else
+                en_letras := en_letras || 'MIL ';
+                
+                end if;
+        end if;
+        
+  ----- CUATRILLONES
+    if cuatrillones= 1 and millares_de_cuatrillon= 0 then
+            en_letras := 'UN CUATRILLÓN ';  
+            
+        elsif cuatrillones > 0 then      
+            en_letras := en_letras || numero_menor_mil(cuatrillones) || 'CUATRILLONES ';
+                 
+      end if; 
+
+
+ ---- millares de trillon
+      if millares_de_trillon = 1 and cuatrillones =0 and millares_de_cuatrillon =0 then
+            if trillones = 0 then
+                en_letras := 'MIL TRILLONES ';              
+            else
+                en_letras := 'MIL ';
+              
+            end if;
+    elsif millares_de_trillon > 1 then
+        
+            en_letras := en_letras || numero_menor_mil(millares_de_trillon);
+             
+            if trillones = 0 then
+                en_letras := en_letras || 'MIL TRILLONES ';
+               
+            else
+                en_letras := en_letras || 'MIL ';
+                
+                end if;
+        end if;
+
+          ----- Trillones
+   if trillones = 1 and millares_de_trillon =0
+            and cuatrillones= 0 and millares_de_cuatrillon= 0 then
+            en_letras := 'UN TRILLÓN ';  
+            
+        elsif trillones > 0 then      
+            en_letras := en_letras || numero_menor_mil(trillones) || 'TRILLONES ';
+                 
+      end if;    
+
+--- MILLARES DE BILLON 
+
+        dbms_output.put_line('letra:'||en_letras);
+
+       if millares_de_billon = 1 then
+            if billones = 0 then
+                en_letras := 'MIL BILLONES ';
+            else
+               en_letras := 'MIL ';
+            end if;
+            
+            dbms_output.put_line('1.- letra:'||en_letras);
+            
+        elsif millares_de_billon > 1 then
+        en_letras := en_letras || numero_menor_mil(millares_de_billon);
+                       
+            dbms_output.put_line('2.- letra:'||en_letras);
+            
+            if billones = 0 then
+                en_letras := en_letras || 'MIL BILLONES ';
+            else
+                en_letras := en_letras || 'MIL ';
+            end if;
+            
+            dbms_output.put_line('3.- letra:'||en_letras);
+            
+        end if;
+
+            --- BILLONES
+      
+      if billones = 1 and millares_de_billon = 0 then
+      
+            en_letras := 'UN BILLÓN ';
+            
+            dbms_output.put_line('4.- letra:'||en_letras);
+            
+      elsif billones > 0 then
+      
+            en_letras := en_letras || numero_menor_mil(billones) || 'BILLONES ';
+            
+            dbms_output.put_line('5.- letra:'||en_letras);
+            
+      end if;       
+        
+                                        -- MILLARES DE MILLON
+    if millares_de_millon = 1 and billones =0 then
+            if millones = 0 then
+                en_letras := 'MIL MILLONES ';
+                dbms_output.put_line('6.- letra:'||en_letras);
+            else
+                en_letras := 'MIL ';
+               dbms_output.put_line('7.- letra:'||en_letras);
+            end if;
+    elsif millares_de_millon > 1 then
+        
+            en_letras := en_letras || numero_menor_mil(millares_de_millon);
+              dbms_output.put_line('8.- letra:'||en_letras);
+
+            if millones = 0 then
+                en_letras := en_letras || 'MIL MILLONES ';
+               
+                dbms_output.put_line('9.- letra:'||en_letras);
+            else
+                en_letras := en_letras || 'MIL ';
+                
+                dbms_output.put_line('10.- letra:'||en_letras);
+            end if;
+        end if;
+
+        -- MILLONES
+        if millones = 1 and  millares_de_millon = 0 and billones=0 then
+            en_letras := 'UN MILLÓN ';
+            
+            dbms_output.put_line('11.- letra:'||en_letras);
+        elsif millones > 0 then
+            en_letras := en_letras || numero_menor_mil(millones) || 'MILLONES ';
+            
+            dbms_output.put_line('12.- letra:'||en_letras);
+        end if;
+
+        -- MILLARES
+        if millares = 1 and millares_de_millon = 0 and millones = 0  and billones=0 then
+            en_letras := 'MIL ';
+            
+            dbms_output.put_line('12.- letra:'||en_letras);
+        elsif millares > 0 then
+            en_letras := en_letras || numero_menor_mil(millares) || 'MIL ';
+            
+            dbms_output.put_line('13.- letra:'||en_letras);
+        end if;
+
+        -- CENTENAS
+        if centenas > 0 or (entero = 0 and centimos = 0) then
+            en_letras := en_letras || numero_menor_mil(centenas);
+            
+            dbms_output.put_line('14.- letra:'||en_letras);
+        end if;
+
+        if centimos > 0 then            
+                aux := '/100 M.N';
+            end if;
+            if entero >= 0 then
+                en_letras := en_letras || 'PESOS ' || centimos || aux;
+            else
+                en_letras := en_letras || centimos || aux;                      
+        end if;
+        
+        if centimos = 0 then
+          aux := '/100 M.N';
+          en_letras := en_letras || centimos || aux;
+        end if;
+
+        return en_letras;
+
+
+    EXCEPTION
+        when fuera_de_rango then
+            return 'Error: entrada fuera de rango';
+        when others then
+           raise;
+          
+  end numero_a_letras;
